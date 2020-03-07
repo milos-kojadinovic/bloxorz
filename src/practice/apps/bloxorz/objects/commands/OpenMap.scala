@@ -1,7 +1,5 @@
 package practice.apps.bloxorz.objects.commands
 
-import java.io.File
-
 import practice.apps.bloxorz.objects.states.State
 
 import scala.io.Source

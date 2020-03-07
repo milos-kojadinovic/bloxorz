@@ -2,9 +2,10 @@ package practice.apps.bloxorz.objects.states
 
 import java.io.File
 
+import practice.apps.bloxorz.objects.states.InitialState.printExistingMaps
 import practice.apps.bloxorz.objects.{EmptyMap, Map}
 
-class State(val map: Map, val positionOfPlayer: (Int, Int)) {
+class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int))) {
 
   implicit def listToMap(list: List[List[Char]]): Map = new Map(list)
 
@@ -12,17 +13,22 @@ class State(val map: Map, val positionOfPlayer: (Int, Int)) {
 
   def writePossibilities(): Unit = {
     println("Current map is:")
-    println(map.toString)
-
+    map.toString(positionOfPlayer)
+    println("For starting game enter \"S\"")
+    importMapPrint()
   }
-}
 
-
-object InitialState extends State(EmptyMap, (0, 0)) {
-
-  override def writePossibilities(): Unit = {
+  def importMapPrint(): Unit = {
     println("For importing map enter \"U (name of existing map) \"")
     printExistingMaps()
+  }
+
+}
+
+object InitialState extends State(EmptyMap, ((-1, -1), (-1, -1))) {
+
+  override def writePossibilities(): Unit = {
+    importMapPrint()
   }
 
   def printExistingMaps(): Unit = {
@@ -37,4 +43,21 @@ object InitialState extends State(EmptyMap, (0, 0)) {
     println("---------------------------------")
   }
 
+}
+
+object GameOverState extends State(EmptyMap, ((-1, -1), (-1, -1))) {
+
+  override def writePossibilities(): Unit = {
+    println("GAME OVER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    println("---------------------------------")
+  }
+
+}
+
+object WinState extends State(EmptyMap, ((-1, -1), (-1, -1))) {
+
+  override def writePossibilities(): Unit = {
+    println("GAME WON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    println("---------------------------------")
+  }
 }
