@@ -2,8 +2,7 @@ package practice.apps.bloxorz.objects.states
 
 import java.io.File
 
-import practice.apps.bloxorz.objects.states.InitialState.printExistingMaps
-import practice.apps.bloxorz.objects.{EmptyMap, Map}
+import practice.apps.bloxorz.objects.{Block, EmptyMap, Map}
 
 class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int))) {
 
@@ -12,27 +11,42 @@ class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int))) {
   def changeMap(newMap: List[List[Char]]): State = new State(newMap, positionOfPlayer)
 
   def writePossibilities(): Unit = {
-    println("Current map is:")
-    map.toString(positionOfPlayer)
-    println("For starting game enter \"S\"")
-    importMapPrint()
+    if (gameStarted) {
+      map.toString(positionOfPlayer)
+      println("--------Meni-------")
+      moveCommands()
+    } else {
+      println("Current map is:")
+      map.toString(positionOfPlayer)
+      println("--------Meni-------")
+      if (map != EmptyMap) {
+        println("For starting game pres \"S\"")
+      }
+      importMapPrint()
+    }
+    println("---------------------------------")
+
+  }
+
+  def gameStarted(): Boolean = {
+    Block.invalidPosition != positionOfPlayer
+  }
+
+  def moveCommands(): Unit = {
+    println("For moving left pres \"L\"")
+    println("For moving right pres \"R\"")
+    println("For moving up pres \"G\"")
+    println("For moving down pres \"D\"")
+
   }
 
   def importMapPrint(): Unit = {
-    println("For importing map enter \"U (name of existing map) \"")
+    println("For importing map enter \"U (name of available map) \"")
     printExistingMaps()
   }
 
-}
-
-object InitialState extends State(EmptyMap, ((-1, -1), (-1, -1))) {
-
-  override def writePossibilities(): Unit = {
-    importMapPrint()
-  }
-
   def printExistingMaps(): Unit = {
-    println("Existing maps:")
+    println("Available maps:")
     val directory = new File("src/practice/apps/bloxorz/maps/")
     if (directory.exists && directory.isDirectory) {
       directory.listFiles.filter(_.isFile).toList.foreach(file => {
@@ -40,24 +54,15 @@ object InitialState extends State(EmptyMap, ((-1, -1), (-1, -1))) {
         println(nameWithExtension.substring(0, nameWithExtension.length - 4))
       })
     }
-    println("---------------------------------")
   }
 
 }
 
-object GameOverState extends State(EmptyMap, ((-1, -1), (-1, -1))) {
+object InitialState extends State(EmptyMap, Block.invalidPosition) {
 
   override def writePossibilities(): Unit = {
-    println("GAME OVER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    importMapPrint()
     println("---------------------------------")
-  }
 
-}
-
-object WinState extends State(EmptyMap, ((-1, -1), (-1, -1))) {
-
-  override def writePossibilities(): Unit = {
-    println("GAME WON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    println("---------------------------------")
   }
 }

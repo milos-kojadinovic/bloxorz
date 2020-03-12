@@ -1,7 +1,8 @@
 package practice.apps.bloxorz.objects.commands
 
-import practice.apps.bloxorz.objects.states.{GameOverState, State, WinState}
 import practice.apps.bloxorz.objects.Block.inAir
+import practice.apps.bloxorz.objects.states.{InitialState, State}
+import practice.apps.bloxorz.objects.Block.isVertical
 
 class MoveCommand(direction: Char) extends Command {
 
@@ -10,37 +11,37 @@ class MoveCommand(direction: Char) extends Command {
     if (positionOfPlayer._2 == inAir) {
       direction match {
         case 'L' =>
-          ((positionOfPlayer._1._1 - 2, positionOfPlayer._1._2), (positionOfPlayer._1._1 - 1, positionOfPlayer._1._2))
-        case 'R' =>
-          ((positionOfPlayer._1._1 + 1, positionOfPlayer._1._2), (positionOfPlayer._1._1 + 2, positionOfPlayer._1._2))
-        case 'D' =>
-          ((positionOfPlayer._1._1, positionOfPlayer._1._2 + 1), (positionOfPlayer._1._1, positionOfPlayer._1._2 + 2))
-        case 'G' =>
           ((positionOfPlayer._1._1, positionOfPlayer._1._2 - 2), (positionOfPlayer._1._1, positionOfPlayer._1._2 - 1))
+        case 'R' =>
+          ((positionOfPlayer._1._1, positionOfPlayer._1._2 + 1), (positionOfPlayer._1._1, positionOfPlayer._1._2 + 2))
+        case 'D' =>
+          ((positionOfPlayer._1._1 + 1, positionOfPlayer._1._2), (positionOfPlayer._1._1 + 2, positionOfPlayer._1._2))
+        case 'G' =>
+          ((positionOfPlayer._1._1 - 2, positionOfPlayer._1._2), (positionOfPlayer._1._1 - 1, positionOfPlayer._1._2))
       }
     } else {
       direction match {
         case 'L' => {
-          if (positionOfPlayer._1._1 == positionOfPlayer._2._1) { // isVertical
-            ((positionOfPlayer._1._1 - 1, positionOfPlayer._1._2), (positionOfPlayer._2._1 - 1, positionOfPlayer._2._2))
-          } else ((positionOfPlayer._1._1 - 1, positionOfPlayer._1._2), inAir)
+          if (isVertical(positionOfPlayer)) { // isVertical
+            ((positionOfPlayer._1._1, positionOfPlayer._1._2 - 1), (positionOfPlayer._2._1, positionOfPlayer._2._2 - 1))
+          } else ((positionOfPlayer._1._1, positionOfPlayer._1._2 - 1), inAir)
         }
         case 'R' => {
-          if (positionOfPlayer._1._1 == positionOfPlayer._2._1) { // isVertical
-            ((positionOfPlayer._1._1 + 1, positionOfPlayer._1._2), (positionOfPlayer._2._1 + 1, positionOfPlayer._2._2))
-          } else ((positionOfPlayer._2._1 + 1, positionOfPlayer._2._2), inAir)
+          if (isVertical(positionOfPlayer)) { // isVertical
+            ((positionOfPlayer._1._1, positionOfPlayer._1._2 + 1), (positionOfPlayer._2._1, positionOfPlayer._2._2 + 1))
+          } else ((positionOfPlayer._2._1, positionOfPlayer._2._2 + 1), inAir)
         }
         case 'D' => {
-          if (positionOfPlayer._1._1 == positionOfPlayer._2._1) { // isVertical
-            ((positionOfPlayer._2._1, positionOfPlayer._2._2 + 1), inAir)
+          if (isVertical(positionOfPlayer)) { // isVertical
+            ((positionOfPlayer._2._1 + 1, positionOfPlayer._2._2), inAir)
           } else
-            ((positionOfPlayer._1._1, positionOfPlayer._1._2 + 1), (positionOfPlayer._2._1, positionOfPlayer._2._2 + 1))
+            ((positionOfPlayer._1._1 + 1, positionOfPlayer._1._2), (positionOfPlayer._2._1 + 1, positionOfPlayer._2._2))
         }
         case 'G' => {
-          if (positionOfPlayer._1._1 == positionOfPlayer._2._1) { // isVertical
-            ((positionOfPlayer._1._1, positionOfPlayer._1._2 - 1), inAir)
+          if (isVertical(positionOfPlayer)) { // isVertical
+            ((positionOfPlayer._1._1 - 1, positionOfPlayer._1._2), inAir)
           } else
-            ((positionOfPlayer._1._1, positionOfPlayer._1._2 - 1), (positionOfPlayer._2._1, positionOfPlayer._2._2 - 1))
+            ((positionOfPlayer._1._1 - 1, positionOfPlayer._1._2), (positionOfPlayer._2._1 - 1, positionOfPlayer._2._2))
         }
       }
     }
@@ -48,12 +49,23 @@ class MoveCommand(direction: Char) extends Command {
   }
 
   override def apply(state: State): State = {
-    val newPosition = move(state.positionOfPlayer)
-    if (state.map.checkGameOver(newPosition))
-      GameOverState
-    else if (state.map.checkWin(newPosition)) {
-      WinState
-    } else
-      new State(state.map, newPosition)
+    if (!state.gameStarted()) {
+      println("Start the game first!")
+      println("---------------------------------")
+      state
+    } else {
+      val newPosition = move(state.positionOfPlayer)
+      if (state.map.checkGameOver(newPosition)) {
+        println("GAME OVER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        println("---------------------------------")
+        InitialState
+      } else if (state.map.checkWin(newPosition)) {
+        println("GAME WON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        println("---------------------------------")
+        InitialState
+      } else
+        new State(state.map, newPosition)
+    }
   }
+
 }

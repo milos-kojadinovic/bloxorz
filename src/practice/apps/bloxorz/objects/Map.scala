@@ -13,7 +13,7 @@ class Map(val fields: List[List[Char]]) {
   def changeField(x: Int, y: Int): Map = ???
 
   def findStartPosition(): ((Int, Int), (Int, Int)) = {
-    (findPositionOfField('S'), (-1, -1))
+    (findPositionOfField('S'), Block.inAir)
   }
 
   def findPositionOfField(field: Char): (Int, Int) = {
@@ -50,9 +50,16 @@ class Map(val fields: List[List[Char]]) {
     position == Block.inAir
   }
 
-  def checkGameOver(position: ((Int, Int), (Int, Int))): Boolean = {
-    isTerminal(getField(position._1)) || (notInAir(position._2) && isTerminal(getField(position._2))) ||
-      (isInAir(position._2) && isDot(getField(position._1)))
+  def isOutOfBounds(block: ((Int, Int), (Int, Int))): Boolean = {
+    val column = fields.head.length
+    val rows = fields.length
+    (block._1._1 >= rows || block._2._1 >= rows) || (block._1._1 < 0 || (notInAir(block._2) && block._2._1 < 0)) ||
+      ((block._1._2 >= column || block._2._2 >= column) || (block._1._2 < 0 || (notInAir(block._2) && block._2._2 < 0)))
+  }
+
+  def checkGameOver(block: ((Int, Int), (Int, Int))): Boolean = {
+    isTerminal(getField(block._1)) || (notInAir(block._2) && isTerminal(getField(block._2))) ||
+      (isInAir(block._2) && isDot(getField(block._1))) || isOutOfBounds(block)
   }
 
   def checkWin(position: ((Int, Int), (Int, Int))): Boolean = {
@@ -66,11 +73,11 @@ class Map(val fields: List[List[Char]]) {
 
       @scala.annotation.tailrec
       def findStartRowHelper(row: List[Char], column: Int): Char = {
-        if (column == position._1) row.head
+        if (column == position._2) row.head
         else findStartRowHelper(row.tail, column + 1)
       }
 
-      if (row == position._2) findStartRowHelper(mapMatrix.head, 0)
+      if (row == position._1) findStartRowHelper(mapMatrix.head, 0)
       else getFieldHelper(mapMatrix.tail, row + 1)
     }
 
@@ -90,7 +97,7 @@ class Map(val fields: List[List[Char]]) {
 
       @scala.annotation.tailrec
       def printRowHelper(rowFields: List[Char], column: Int): Unit = {
-        if ((column, row).equals(positionOfPlayer._1) || (column, row).equals(positionOfPlayer._2)) print(" B")
+        if ((row, column).equals(positionOfPlayer._1) || (row, column).equals(positionOfPlayer._2)) print(" B")
         else print(" " + rowFields.head)
         if (rowFields.tail.nonEmpty)
           printRowHelper(rowFields.tail, column + 1)

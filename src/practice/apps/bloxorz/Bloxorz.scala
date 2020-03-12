@@ -20,12 +20,10 @@ object Bloxorz extends App {
   val scanner = new Scanner(System.in)
   val initialState: State = InitialState
 
-  println("--------Meni-------")
   initialState.writePossibilities()
 
   io.Source.stdin.getLines().foldLeft(initialState)((state, commandString) => {
     val newState = executeCommand(state, commandString)
-    println("--------Meni-------")
     newState.writePossibilities()
     newState
   })
