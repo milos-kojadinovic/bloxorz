@@ -49,7 +49,7 @@ class MoveCommand(direction: Char) extends Command {
   }
 
   override def apply(state: State): State = {
-    if (!state.gameStarted()) {
+    if (!state.gameStarted) {
       println("Start the game first!")
       println("---------------------------------")
       state

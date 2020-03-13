@@ -10,17 +10,32 @@ class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int))) {
 
   def changeMap(newMap: List[List[Char]]): State = new State(newMap, positionOfPlayer)
 
+  def changeField(fieldToChange: Char, coordinates: (Int, Int)): State = {
+    if ((coordinates equals map.findStartPosition) || (coordinates equals map.findTerminalPosition)) {
+      println("Deleting start or terminal position is impossible!")
+      this
+    } else
+      new State(map.changeField(fieldToChange, coordinates), positionOfPlayer)
+  }
+
+  def swapField(fieldToChange: Char, coordinates: (Int, Int)): State = {
+    val oldCoordinates = map.findPositionOfField(fieldToChange)
+    new State(map.changeField(fieldToChange, coordinates).changeField(Map.defaultField, oldCoordinates),
+      positionOfPlayer)
+  }
+
   def writePossibilities(): Unit = {
     if (gameStarted) {
       map.toString(positionOfPlayer)
       println("--------Meni-------")
-      moveCommands()
+      printMoveCommands()
     } else {
       println("Current map is:")
       map.toString(positionOfPlayer)
       println("--------Meni-------")
       if (map != EmptyMap) {
         println("For starting game pres \"S\"")
+        printChangeCommands()
       }
       importMapPrint()
     }
@@ -28,16 +43,30 @@ class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int))) {
 
   }
 
-  def gameStarted(): Boolean = {
+  def gameStarted: Boolean = {
     Block.invalidPosition != positionOfPlayer
   }
 
-  def moveCommands(): Unit = {
+  def mapLoaded: Boolean = {
+    this.map != EmptyMap
+  }
+
+  def printMoveCommands(): Unit = {
     println("For moving left pres \"L\"")
     println("For moving right pres \"R\"")
     println("For moving up pres \"G\"")
     println("For moving down pres \"D\"")
 
+  }
+
+
+  def printChangeCommands(): Unit = {
+
+    println("For removing field enter \"Remove(coordinate1,coordinate2)\"")
+    println("For adding default field enter \"Add(coordinate1,coordinate2)\"")
+    println("For putting special field enter \"Special(coordinate1,coordinate2)\"")
+    println("For changing coordinates of start field enter \"Start(coordinate1,coordinate2)\"")
+    println("For changing coordinates of terminal field enter \"Terminal(coordinate1,coordinate2)\"")
   }
 
   def importMapPrint(): Unit = {
@@ -56,6 +85,9 @@ class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int))) {
     }
   }
 
+  def isInitialState: Boolean = {
+    InitialState == this
+  }
 }
 
 object InitialState extends State(EmptyMap, Block.invalidPosition) {

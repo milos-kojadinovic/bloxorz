@@ -2,18 +2,38 @@ package practice.apps.bloxorz.objects
 
 class Map(val fields: List[List[Char]]) {
 
-  def addRow(position: Int): Map = ???
+  def changeField(char: Char, coordinates: (Int, Int)): Map = {
 
-  def addColumn(position: Int): Map = ???
+    def matrixHelper(mapMatrix: List[List[Char]], row: Int): List[List[Char]] = {
 
-  def deleteRow(position: Int): Map = ???
+      def rowHelper(rowFields: List[Char], column: Int): List[Char] = {
+        if ((row, column) equals (coordinates)) {
+          char :: rowFields.tail
+        } else {
+          if (rowFields.isEmpty) {
+            rowFields
+          } else {
+            rowFields.head :: rowHelper(rowFields.tail, column + 1)
+          }
+        }
+      }
 
-  def deleteColumn(position: Int): Map = ???
+      if (mapMatrix.isEmpty) {
+        mapMatrix
+      } else {
+        rowHelper(mapMatrix.head, 0) :: matrixHelper(mapMatrix.tail, row + 1)
+      }
+    }
 
-  def changeField(x: Int, y: Int): Map = ???
+    new Map(matrixHelper(fields, 0))
+  }
 
-  def findStartPosition(): ((Int, Int), (Int, Int)) = {
-    (findPositionOfField('S'), Block.inAir)
+  def findStartPosition(): ((Int, Int)) = {
+    findPositionOfField('S')
+  }
+
+  def findTerminalPosition(): ((Int, Int)) = {
+    findPositionOfField('T')
   }
 
   def findPositionOfField(field: Char): (Int, Int) = {
@@ -120,8 +140,13 @@ object Map {
   val terminalCharactersDefeat: String = "–-"
   val terminalCharactersDot: String = "."
   val terminalCharactersWin: String = "T"
-}
 
+  val dot = '.'
+  val noField = '–'
+  val defaultField = 'o'
+  val start = 'S'
+  val terminal = 'T'
+}
 
 object EmptyMap extends Map(List.empty) {
 

@@ -1,5 +1,6 @@
 package practice.apps.bloxorz.objects.commands
 
+import practice.apps.bloxorz.objects.Block
 import practice.apps.bloxorz.objects.states.{InitialState, State}
 
 class StartGame() extends Command {
@@ -8,7 +9,7 @@ class StartGame() extends Command {
       println("Chose map first.")
       state
     } else {
-      new State(state.map, state.map.findStartPosition())
+      new State(state.map, (state.map.findStartPosition(), Block.inAir))
 
     }
   }
