@@ -10,7 +10,6 @@ class StartGame() extends Command {
       state
     } else {
       new State(state.map, (state.map.findStartPosition(), Block.inAir))
-
     }
   }
 }

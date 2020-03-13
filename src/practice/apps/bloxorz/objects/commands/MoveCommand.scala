@@ -1,8 +1,7 @@
 package practice.apps.bloxorz.objects.commands
 
-import practice.apps.bloxorz.objects.Block.inAir
+import practice.apps.bloxorz.objects.Block.{inAir, isVertical}
 import practice.apps.bloxorz.objects.states.{InitialState, State}
-import practice.apps.bloxorz.objects.Block.isVertical
 
 class MoveCommand(direction: Char) extends Command {
 

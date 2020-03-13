@@ -18,7 +18,6 @@ class OpenMap(name: String) extends Command {
 
   }
 
-
   override def apply(state: State): State = {
 
     val newMapTry = Try {

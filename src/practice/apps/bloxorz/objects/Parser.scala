@@ -1,6 +1,6 @@
 package practice.apps.bloxorz.objects
 
-import practice.apps.bloxorz.objects.commands.{ChangeField, Command, MoveCommand, OpenMap, StartGame, SwapFields, UnknownCommand}
+import practice.apps.bloxorz.objects.commands._
 
 import scala.util.Try
 
