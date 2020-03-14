@@ -4,28 +4,32 @@ class Map(val fields: List[List[Char]]) {
 
   def changeField(char: Char, coordinates: (Int, Int)): Map = {
 
-    def matrixHelper(mapMatrix: List[List[Char]], row: Int): List[List[Char]] = {
+    @scala.annotation.tailrec
+    def matrixHelper(forehead: List[List[Char]], mapMatrix: List[List[Char]], row: Int): List[List[Char]] = {
 
-      def rowHelper(rowFields: List[Char], column: Int): List[Char] = {
-        if ((row, column) equals (coordinates)) {
-          char :: rowFields.tail
+      @scala.annotation.tailrec
+      def rowHelper(forehead: List[Char], rowFields: List[Char], column: Int): List[Char] = {
+        if (rowFields.isEmpty) {
+          forehead
         } else {
-          if (rowFields.isEmpty) {
-            rowFields
-          } else {
-            rowFields.head :: rowHelper(rowFields.tail, column + 1)
-          }
+          val field = if ((row, column) equals (coordinates))
+            char
+          else rowFields.head
+          val newForehead = forehead :+ field
+          rowHelper(newForehead, rowFields.tail, column + 1)
         }
+
       }
 
       if (mapMatrix.isEmpty) {
-        mapMatrix
+        forehead
       } else {
-        rowHelper(mapMatrix.head, 0) :: matrixHelper(mapMatrix.tail, row + 1)
+        val newForehead: List[List[Char]] = forehead :+ rowHelper(List(), mapMatrix.head, 0)
+        matrixHelper(newForehead, mapMatrix.tail, row + 1)
       }
     }
 
-    new Map(matrixHelper(fields, 0))
+    new Map(matrixHelper(List(), fields, 0))
   }
 
   def findStartPosition(): ((Int, Int)) = {
