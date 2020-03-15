@@ -63,7 +63,7 @@ class MoveCommand(direction: Char) extends Command {
         println("---------------------------------")
         InitialState
       } else
-        new State(state.map, newPosition)
+        new State(state.map, newPosition,state.commandsHolder)
     }
   }
 

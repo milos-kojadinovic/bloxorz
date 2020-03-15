@@ -9,7 +9,7 @@ class StartGame() extends Command {
       println("Chose map first.")
       state
     } else {
-      new State(state.map, (state.map.findStartPosition(), Block.inAir))
+      new State(state.map, (state.map.findStartPosition(), Block.inAir), state.commandsHolder)
     }
   }
 }

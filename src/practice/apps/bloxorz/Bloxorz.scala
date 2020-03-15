@@ -2,16 +2,14 @@ package practice.apps.bloxorz
 
 import java.util.Scanner
 
-import practice.apps.bloxorz.objects.Parser.from
-import practice.apps.bloxorz.objects.commands.Command
 import practice.apps.bloxorz.objects.states.{InitialState, State};
 
 object Bloxorz extends App {
 
   //Def of methods
 
-  def executeCommand(state: State, command: Command): State = {
-    command.apply(state)
+  def executeCommand(state: State, command: String): State = {
+    state.commandsHolder.from(command).apply(state)
   }
 
   //Main body
