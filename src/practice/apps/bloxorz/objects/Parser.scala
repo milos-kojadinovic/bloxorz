@@ -7,10 +7,9 @@ import scala.util.Try
 
 object Parser {
   implicit def from(str: String): Command = str match {
-    case s"U($name)" => {
-      new OpenMap(name)
-    }
+    case s"U($name)" => new OpenMap(name)
     case "S" => new StartGame()
+    case s"PlayFromFile($name)" => new PlayFromFile(name)
     case s"Remove($x,$y)" if checkCoordinates(x, y) => new ChangeField(Map.noField, (x.toInt, y.toInt))
     case s"Add($x,$y)" if checkCoordinates(x, y) => new ChangeField(Map.defaultField, (x.toInt, y.toInt))
     case s"Special($x,$y)" if checkCoordinates(x, y) => new ChangeField(Map.dot, (x.toInt, y.toInt))

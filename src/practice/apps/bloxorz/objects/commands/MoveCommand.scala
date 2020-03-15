@@ -67,4 +67,5 @@ class MoveCommand(direction: Char) extends Command {
     }
   }
 
+  override def toString: String = "Move command: " + direction
 }
