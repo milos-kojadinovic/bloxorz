@@ -3,13 +3,15 @@ package practice.apps.bloxorz.objects.commands
 import java.io.File
 
 import practice.apps.bloxorz.objects.Map
+import practice.apps.bloxorz.objects.commands.error.CompositeCommandError
 import practice.apps.bloxorz.objects.states.{InitialState, State}
 
+import scala.collection.immutable.HashMap
 import scala.util.Try
 
-class CommandsHolder {
+class CommandsHolder(val additionalCommands: HashMap[String, Command]) {
 
-  implicit def from(str: String): Command = str match {
+  def from(str: String): Command = str match {
     case s"U($name)" => new OpenMap(name)
     case "S" => new StartGame()
     case s"PlayFromFile($name)" => new PlayFromFile(name)
@@ -19,7 +21,31 @@ class CommandsHolder {
     case s"Start($x,$y)" if checkCoordinates(x, y) => new SwapFields(Map.start, (x.toInt, y.toInt))
     case s"Terminal($x,$y)" if checkCoordinates(x, y) => new SwapFields(Map.terminal, (x.toInt, y.toInt))
     case string: String if string.matches("[LRGD]") => new MoveCommand(string.charAt(0))
-    case _ => new UnknownCommand()
+    case s"Create($name=$commands)" => {
+
+      val commandsList = Try {
+        commands.split('+').map { str =>
+          val commandToAdd = from(str.trim)
+          if (commandToAdd equals UnknownCommand)
+            throw new CompositeCommandError
+          else commandToAdd
+        }.toList
+      }
+
+      if (commandsList.isSuccess)
+        new AddCompositeCommand(new CompositeCommand(name.trim, commandsList.get))
+      else {
+        println("Error creating composite command! Please try again.")
+        UnknownCommand
+      }
+    }
+    case compositeCommandName if additionalCommands.get(compositeCommandName).nonEmpty =>
+      additionalCommands(compositeCommandName)
+    case _ => UnknownCommand
+  }
+
+  def addCommand(compositeCommand: CompositeCommand): CommandsHolder = {
+    new CommandsHolder(additionalCommands + (compositeCommand.name -> compositeCommand))
   }
 
   def checkCoordinates(x: String, y: String): Boolean = {
@@ -36,13 +62,19 @@ class CommandsHolder {
       state.printMap()
       printMoveCommands()
     } else {
-      println("Current map is:")
-      state.printMap()
+      if (state.mapLoaded) {
+        println("Current map is:")
+        state.printMap()
+      }
       println("--------Meni-------")
       if (state.mapLoaded) {
         println("For starting game pres \"S\"")
         println("For playing moves from file enter \"PlayFromFile(name of file in moves folder)\"")
         printChangeCommands()
+      }
+      println("For creating new composite function enter Create(name of new function=functions separated with \"+\")")
+      if (additionalCommands.nonEmpty) {
+        additionalCommands.keySet.foreach(name => println("For composite command " + name + " enter \"" + name + "\""))
       }
       importMapPrint()
     }
@@ -84,5 +116,5 @@ class CommandsHolder {
 
 }
 
-object DefaultCommandsHolder extends CommandsHolder {
+object DefaultCommandsHolder extends CommandsHolder(HashMap()) {
 }

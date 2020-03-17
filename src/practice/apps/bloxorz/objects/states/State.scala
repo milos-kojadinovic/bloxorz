@@ -1,11 +1,19 @@
 package practice.apps.bloxorz.objects.states
 
-import practice.apps.bloxorz.objects.commands.{CommandsHolder, DefaultCommandsHolder}
+import practice.apps.bloxorz.objects.commands.{CommandsHolder, CompositeCommand, DefaultCommandsHolder}
 import practice.apps.bloxorz.objects.{Block, EmptyMap, Map}
 
 class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int)), val commandsHolder: CommandsHolder) {
 
+  def reset(): State = {
+    new State(EmptyMap, Block.invalidPosition, commandsHolder)
+  }
+
   implicit def listToMap(list: List[List[Char]]): Map = new Map(list)
+
+  def addCompositeCommand(compositeCommand: CompositeCommand): State = {
+    new State(map, positionOfPlayer, commandsHolder.addCommand(compositeCommand))
+  }
 
   def changeMap(newMap: List[List[Char]]): State = new State(newMap, positionOfPlayer, commandsHolder)
 

@@ -57,11 +57,11 @@ class MoveCommand(direction: Char) extends Command {
       if (state.map.checkGameOver(newPosition)) {
         println("GAME OVER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         println("---------------------------------")
-        InitialState
+        state.reset()
       } else if (state.map.checkWin(newPosition)) {
         println("GAME WON!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         println("---------------------------------")
-        InitialState
+        state.reset()
       } else
         new State(state.map, newPosition,state.commandsHolder)
     }
