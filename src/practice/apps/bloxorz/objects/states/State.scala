@@ -31,6 +31,13 @@ class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int)), val co
       positionOfPlayer, commandsHolder)
   }
 
+  def swapStartTerminal(): State = {
+    val oldStart = map.findStartPosition()
+    val oldTerminal = map.findTerminalPosition()
+    val newMap = map.changeField('S', oldTerminal).changeField('T', oldStart)
+    new State(newMap, positionOfPlayer, commandsHolder)
+  }
+
   def writePossibilities(): Unit = {
     commandsHolder.printPosibilities(this)
   }
