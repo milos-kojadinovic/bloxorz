@@ -59,6 +59,10 @@ class Map(val fields: List[List[Char]]) {
     findPositionHelper(fields, 0)
   }
 
+  def removeSpecial(): Map = {
+    new Map(fields.map(row => row.map(field => if (field equals Map.dot) Map.defaultField else field)))
+  }
+
 
   def isTerminal(field: Char): Boolean = Map.terminalCharactersDefeat.contains(field)
 

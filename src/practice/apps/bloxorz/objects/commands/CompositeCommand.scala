@@ -11,7 +11,15 @@ class CompositeCommand(val name: String, commands: List[Command]) extends Comman
       else applyCommand(commands.head(state), commands.tail)
     }
 
-    applyCommand(state, commands)
+    if (!state.gameStarted && state.mapLoaded) {
+      applyCommand(state, commands)
+    } else {
+      if (state.gameStarted)
+        println("Game already started, map can not be changed!")
+      if (!state.mapLoaded)
+        println("Please select map first!")
+      state
+    }
   }
 
 }

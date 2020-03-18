@@ -7,7 +7,10 @@ class ChangeField(fieldToChange: Char, val coordinates: (Int, Int)) extends Comm
     if (!state.gameStarted && state.mapLoaded) {
       state.changeField(fieldToChange, coordinates)
     } else {
-      println("Game already started, map can not be changed !")
+      if (state.gameStarted)
+        println("Game already started, map can not be changed!")
+      if (!state.mapLoaded)
+        println("Please select map first!")
       state
     }
   }

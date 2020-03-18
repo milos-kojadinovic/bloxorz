@@ -21,6 +21,7 @@ class CommandsHolder(val additionalCommands: HashMap[String, Command]) {
     case s"Start($x,$y)" if checkCoordinates(x, y) => new SwapFields(Map.start, (x.toInt, y.toInt))
     case s"Terminal($x,$y)" if checkCoordinates(x, y) => new SwapFields(Map.terminal, (x.toInt, y.toInt))
     case "Invert" => new InvertCommand
+    case "FilterSpecial" => new FilterSpecialCommand
     case string: String if string.matches("[LRGD]") => new MoveCommand(string.charAt(0))
     case s"Create($name=$commands)" => {
 
@@ -98,10 +99,11 @@ class CommandsHolder(val additionalCommands: HashMap[String, Command]) {
     println("For changing coordinates of start field enter \"Start(coordinate1,coordinate2)\"")
     println("For changing coordinates of terminal field enter \"Terminal(coordinate1,coordinate2)\"")
     println("For inverting coordinates of terminal and start fields enter \"Invert\"")
+    println("For changing all special fields with default fields enter \"FilterSpecial\"")
   }
 
   def importMapPrint(): Unit = {
-    println("For importing map enter \"U (name of available map) \"")
+    println("For importing map enter \"U(name of available map) \"")
     printExistingMaps()
   }
 

@@ -38,6 +38,10 @@ class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int)), val co
     new State(newMap, positionOfPlayer, commandsHolder)
   }
 
+  def removeSpecial(): State = {
+    new State(map.removeSpecial(), positionOfPlayer, commandsHolder)
+  }
+
   def writePossibilities(): Unit = {
     commandsHolder.printPosibilities(this)
   }
