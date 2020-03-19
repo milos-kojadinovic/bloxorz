@@ -63,6 +63,40 @@ class Map(val fields: List[List[Char]]) {
     new Map(fields.map(row => row.map(field => if (field equals Map.dot) Map.defaultField else field)))
   }
 
+  def filterSpecial(coordinate: (Int, Int), distance: Int): Map = {
+
+    val listOfFieldsToCheck: Seq[(Int, Int)] = (1 to distance).flatMap(dis => {
+      List((coordinate._1 - dis, coordinate._2), (coordinate._1 + dis, coordinate._2),
+        (coordinate._1, coordinate._2 - dis), (coordinate._1, coordinate._2 + dis))
+    })
+
+    @scala.annotation.tailrec
+    def matrixHelper(forehead: List[List[Char]], mapMatrix: List[List[Char]], row: Int): List[List[Char]] = {
+
+      @scala.annotation.tailrec
+      def rowHelper(forehead: List[Char], rowFields: List[Char], column: Int): List[Char] = {
+        if (rowFields.isEmpty) {
+          forehead
+        } else {
+          val field = if (rowFields.head.equals(Map.dot) && listOfFieldsToCheck.contains(row, column))
+            Map.defaultField
+          else rowFields.head
+          val newForehead = forehead :+ field
+          rowHelper(newForehead, rowFields.tail, column + 1)
+        }
+      }
+
+      if (mapMatrix.isEmpty) {
+        forehead
+      } else {
+        val newForehead: List[List[Char]] = forehead :+ rowHelper(List(), mapMatrix.head, 0)
+        matrixHelper(newForehead, mapMatrix.tail, row + 1)
+      }
+    }
+
+    new Map(matrixHelper(List(), fields, 0))
+  }
+
 
   def isTerminal(field: Char): Boolean = Map.terminalCharactersDefeat.contains(field)
 

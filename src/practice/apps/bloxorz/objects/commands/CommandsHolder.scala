@@ -21,6 +21,8 @@ class CommandsHolder(val additionalCommands: HashMap[String, Command]) {
     case s"Start($x,$y)" if checkCoordinates(x, y) => new SwapFields(Map.start, (x.toInt, y.toInt))
     case s"Terminal($x,$y)" if checkCoordinates(x, y) => new SwapFields(Map.terminal, (x.toInt, y.toInt))
     case "Invert" => new InvertCommand
+    case s"FilterSpecial((${x},${y}),$distance)" if checkCoordinates(x, y) && Try(distance.toInt).isSuccess =>
+      new FilterCommand((x.toInt, y.toInt), distance.toInt)
     case "FilterSpecial" => new FilterSpecialCommand
     case string: String if string.matches("[LRGD]") => new MoveCommand(string.charAt(0))
     case s"Create($name=$commands)" => {
@@ -68,7 +70,6 @@ class CommandsHolder(val additionalCommands: HashMap[String, Command]) {
         println("Current map is:")
         state.printMap()
       }
-      println("--------Meni-------")
       if (state.mapLoaded) {
         println("For starting game pres \"S\"")
         println("For playing moves from file enter \"PlayFromFile(name of file in moves folder)\"")
@@ -100,6 +101,8 @@ class CommandsHolder(val additionalCommands: HashMap[String, Command]) {
     println("For changing coordinates of terminal field enter \"Terminal(coordinate1,coordinate2)\"")
     println("For inverting coordinates of terminal and start fields enter \"Invert\"")
     println("For changing all special fields with default fields enter \"FilterSpecial\"")
+    println("For changing special fields with default fields that are on distance from certain field enter " +
+      "\"FilterSpecial((coordinate1 of field,coordinate2 of field),distance)\"")
   }
 
   def importMapPrint(): Unit = {

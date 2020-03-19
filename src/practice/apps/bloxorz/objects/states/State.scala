@@ -42,6 +42,11 @@ class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int)), val co
     new State(map.removeSpecial(), positionOfPlayer, commandsHolder)
   }
 
+  def filterSpecial(coordinate: (Int, Int), distance: Int): State = {
+    new State(map.filterSpecial(coordinate, distance), positionOfPlayer, commandsHolder)
+  }
+
+
   def writePossibilities(): Unit = {
     commandsHolder.printPosibilities(this)
   }

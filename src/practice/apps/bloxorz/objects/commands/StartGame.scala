@@ -5,7 +5,7 @@ import practice.apps.bloxorz.objects.states.{InitialState, State}
 
 class StartGame() extends Command {
   override def apply(state: State): State = {
-    if (state eq InitialState) {
+    if (!state.mapLoaded) {
       println("Chose map first.")
       state
     } else {
