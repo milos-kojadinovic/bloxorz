@@ -120,8 +120,8 @@ class Map(val fields: List[List[Char]]) {
   }
 
   def checkGameOver(block: ((Int, Int), (Int, Int))): Boolean = {
-    isTerminal(getField(block._1)) || (notInAir(block._2) && isTerminal(getField(block._2))) ||
-      (isInAir(block._2) && isDot(getField(block._1))) || isOutOfBounds(block)
+    isOutOfBounds(block) || isTerminal(getField(block._1)) || (notInAir(block._2) && isTerminal(getField(block._2))) ||
+      (isInAir(block._2) && isDot(getField(block._1)))
   }
 
   def checkWin(position: ((Int, Int), (Int, Int))): Boolean = {

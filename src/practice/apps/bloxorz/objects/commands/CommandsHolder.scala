@@ -15,6 +15,7 @@ class CommandsHolder(val additionalCommands: HashMap[String, Command]) {
     case s"U($name)" => new OpenMap(name)
     case "S" => new StartGame()
     case s"PlayFromFile($name)" => new PlayFromFile(name)
+    case "Solve" => new SolveCommand
     case s"Remove($x,$y)" if checkCoordinates(x, y) => new ChangeField(Map.noField, (x.toInt, y.toInt))
     case s"Add($x,$y)" if checkCoordinates(x, y) => new ChangeField(Map.defaultField, (x.toInt, y.toInt))
     case s"Special($x,$y)" if checkCoordinates(x, y) => new ChangeField(Map.dot, (x.toInt, y.toInt))
@@ -73,6 +74,7 @@ class CommandsHolder(val additionalCommands: HashMap[String, Command]) {
       if (state.mapLoaded) {
         println("For starting game pres \"S\"")
         println("For playing moves from file enter \"PlayFromFile(name of file in moves folder)\"")
+        println("For solving game enter \"Solve\" (solution will be in file solution.txt inside moves folder)")
         printChangeCommands()
       }
       println("For creating new composite function enter Create(name of new function=functions separated with \"+\")")

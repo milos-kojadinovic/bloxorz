@@ -3,31 +3,31 @@ package practice.apps.bloxorz.objects.states
 import practice.apps.bloxorz.objects.commands.{CommandsHolder, CompositeCommand, DefaultCommandsHolder}
 import practice.apps.bloxorz.objects.{Block, EmptyMap, Map}
 
-class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int)), val commandsHolder: CommandsHolder) {
+case class State(map: Map, positionOfPlayer: ((Int, Int), (Int, Int)), val commandsHolder: CommandsHolder) {
 
   def reset(): State = {
-    new State(EmptyMap, Block.invalidPosition, commandsHolder)
+    State(EmptyMap, Block.invalidPosition, commandsHolder)
   }
 
   implicit def listToMap(list: List[List[Char]]): Map = new Map(list)
 
   def addCompositeCommand(compositeCommand: CompositeCommand): State = {
-    new State(map, positionOfPlayer, commandsHolder.addCommand(compositeCommand))
+    State(map, positionOfPlayer, commandsHolder.addCommand(compositeCommand))
   }
 
-  def changeMap(newMap: List[List[Char]]): State = new State(newMap, positionOfPlayer, commandsHolder)
+  def changeMap(newMap: List[List[Char]]): State = State(newMap, positionOfPlayer, commandsHolder)
 
   def changeField(fieldToChange: Char, coordinates: (Int, Int)): State = {
     if ((coordinates equals map.findStartPosition) || (coordinates equals map.findTerminalPosition)) {
       println("Deleting start or terminal position is impossible!")
       this
     } else
-      new State(map.changeField(fieldToChange, coordinates), positionOfPlayer, commandsHolder)
+      State(map.changeField(fieldToChange, coordinates), positionOfPlayer, commandsHolder)
   }
 
   def swapField(fieldToChange: Char, coordinates: (Int, Int)): State = {
     val oldCoordinates = map.findPositionOfField(fieldToChange)
-    new State(map.changeField(fieldToChange, coordinates).changeField(Map.defaultField, oldCoordinates),
+    State(map.changeField(fieldToChange, coordinates).changeField(Map.defaultField, oldCoordinates),
       positionOfPlayer, commandsHolder)
   }
 
@@ -35,17 +35,18 @@ class State(val map: Map, val positionOfPlayer: ((Int, Int), (Int, Int)), val co
     val oldStart = map.findStartPosition()
     val oldTerminal = map.findTerminalPosition()
     val newMap = map.changeField('S', oldTerminal).changeField('T', oldStart)
-    new State(newMap, positionOfPlayer, commandsHolder)
+    State(newMap, positionOfPlayer, commandsHolder)
   }
 
   def removeSpecial(): State = {
-    new State(map.removeSpecial(), positionOfPlayer, commandsHolder)
+    State(map.removeSpecial(), positionOfPlayer, commandsHolder)
   }
 
   def filterSpecial(coordinate: (Int, Int), distance: Int): State = {
-    new State(map.filterSpecial(coordinate, distance), positionOfPlayer, commandsHolder)
+    State(map.filterSpecial(coordinate, distance), positionOfPlayer, commandsHolder)
   }
 
+  def moveToPosition(newPosition: ((Int, Int), (Int, Int))): State = State(map, newPosition, commandsHolder)
 
   def writePossibilities(): Unit = {
     commandsHolder.printPosibilities(this)

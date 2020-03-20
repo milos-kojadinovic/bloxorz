@@ -8,8 +8,16 @@ import scala.io.Source
 class PlayFromFile(name: String) extends Command {
 
   override def apply(state: State): State = {
-    val commands = loadCommands(state)
-    doAllCommands(new StartGame().apply(state), commands)
+    if (!state.gameStarted && state.mapLoaded) {
+      val commands = loadCommands(state)
+      doAllCommands(new StartGame().apply(state), commands)
+    } else {
+      if (state.gameStarted)
+        println("Game already started, map can not be changed!")
+      if (!state.mapLoaded)
+        println("Please select map first!")
+      state
+    }
   }
 
   def loadCommands(state: State): List[Command] = {
